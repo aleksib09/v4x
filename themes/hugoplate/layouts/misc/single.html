@@ -1,0 +1,151 @@
+{{ define "main" }}
+  <section class="section pt-7">
+    <div class="container">
+      <div class="row justify-center">
+        <article class="lg:col-10">
+          {{ $image:= .Params.image }}
+          {{ if $image }}
+            <div class="mb-2">
+              {{ partial "image" (dict "Src" $image "Context" .Page "Alt" .Title "Class" "w-full rounded") }}
+            </div>
+          {{ end }}
+          <h1 class="h2 mb-4">
+            {{ .Title }}
+          </h1>
+          <ul class="mb-4">
+            {{ $categories:= .Params.categories }}
+            {{ if $categories }}
+              <li class="mr-4 inline-block">
+                <i class="fa-solid fa-map-pin fa-xs mr-2"></i>Collection: 
+                {{ range $i,$p:= $categories }}
+                  <a
+                    href="{{ `categories/` | relLangURL }}{{ . | urlize | lower }}/"
+                    class=""
+                    >{{ . | humanize }}{{ if ne $i (sub (len $categories) 1) }}
+                      {{ "," }}
+                    {{ end }}
+                  </a>
+                {{ end }}
+              </li>
+            {{ end }}
+            <li class="mr-4 inline-block">
+              <i class="fa-regular fa-pencil-square mr-2"></i>Date added: 
+              {{ time.Format ":date_long" .PublishDate }}
+            </li>
+            <li class="mr-4 inline-block">
+              <i class="fa-solid fa-user fa-xs  mr-2"></i>Created by: 
+              <a href="/tags/{{ .Params.creator | urlize }}" target="_blank"> {{ if or (.Params.creator) (.Params.creatorfull)}}  {{ .Params.creator | or .Params.creatorfull }} {{ end }} </a>
+            </li>
+          </ul>
+          <div class="content">
+            <hr style="margin-top: 6px;">
+            {{/*  {{ partial "toc.html" (dict "Class" "blog" "Collapsed" false "TableOfContents" .TableOfContents ) }}  */}}
+            {{ .Content }}
+            <hr style="margin-bottom: 12px;">
+          </div>
+          <style>
+            p.inborder {
+              position: absolute;
+              background: white;
+              font-size: 0.85rem;
+              line-height: 0.1;
+              padding: 0 0.25rem;
+              margin-left: 0.6rem;
+              display: inline-block;
+              z-index: 2;
+          }
+          </style>
+          {{ $cspreq:= .Params.csp}}
+          {{ $cspreq1:= .Params.csp1}}
+          {{ $trackrq:= .Params.requirement}}
+          {{ $trackrqlink:= .Params.requirelink}}
+          {{ if in $cspreq "No" }}
+          {{ else }}
+          <div class="notice warning" style="margin-bottom:12px">
+            <div class="notice-head"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="22" height="22">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"></path>
+            </svg><p>Mod Requirements</p>
+            </div>
+            <div class="notice-body "><p>This mod requires <b>Custom Shader Patch (CSP) {{ .Params.csp }} </b> public or newer. You can get latest CSP 0.28 preview 1 <a href="/misc/csp-028-preview1/"><strong>HERE</strong></a>!</p></div>
+          </div>
+          {{ end }}
+          <div class="flex items-center justify-center w-full py-2">
+            <div class="overflow-x-auto w-full">
+                    <div class="flex space-x-2">
+                        <div class="text-left px-2 py-2 grid grid-cols-2 rounded-lg gap-1 border content-center w-1/2" style="padding-left:23px">
+                            <div>
+                                <p>Name: <b>{{ .Params.name}}</b></p>
+                              </div>
+                              <div style="padding-left:25px">
+                                <p>File Size: <b>{{ .Params.zipsize}}</b></p>
+                              </div>
+                              <div>
+                                <p>Creator: <a href="/tags/{{ .Params.creator }}" class="font-bold">{{ .Params.creator}}</a></p>
+                                </div>
+                                <div style="padding-left:25px">
+                                  <p>Version: <b> {{ .Params.version }} </b></p>
+                                  </div>
+                        </div>
+                        <div class="text-center rounded-lg border flex items-center justify-center w-1/4">
+                          {{ if .Params.link2 }}
+                          <a href="{{ .Params.link2 }}"><img alt={{ .Params.hosts2 }} class="mx-auto" src="/images/{{ .Params.host2 }}.png" width="168"></a>
+                          {{ else }}
+                          <a href="{{ .Params.creatorlink }}" target="_blank"><img class="mx-auto" src="/images/{{ .Params.creator }}.jpg" width="78"></a>
+                          {{ end }}
+                      </div>
+                        <div class="text-center rounded-lg border flex items-center justify-center w-1/4">
+                          <a href="{{ .Params.link }}" target="_blank"><img alt={{ .Params.host }} class="mx-auto" src="/images/{{ .Params.host }}.png" width="148"></a>
+                      </div>
+                    </div>
+                </div>
+            </div>
+          <br>
+          <div class="row items-start justify-between">
+            {{ $tags:= .Params.tags }}
+            {{ if $tags }}
+              <div class="lg:col-12 mb-10 flex items-center lg:mb-0">
+                <h6 class="mr-3">{{ T "tags" }}:</h6>
+                <ul>
+                  {{ range $i,$p:= $tags }}
+                    <li class="inline-block">
+                      <a
+                        class="btn btn-link"
+                        href="{{ `tags/` | relLangURL }}{{ . | urlize | lower }}/">
+                        {{ . }}
+                      </a>
+                    </li>
+                  {{ end }}
+                </ul>
+              </div>
+            {{ end }}
+          </div>
+          <!-- comments 
+          {{ if site.Config.Services.Disqus.Shortname }}
+            <div class="mt-20">
+              {{ template "_internal/disqus.html" . }}
+            </div>
+          {{ end }}
+        </article>
+      </div> -->
+
+      <!-- Related posts -->
+      {{ $related := .Site.RegularPages.Related . | first 10 }}
+      {{ $related = $related | shuffle | first 6 }}
+      {{ with $related }}
+        <div class="section pb-0">
+          <h4 class="h6 mb-6"><i class="fa fa-paperclip"></i> Other similar mods</h4>
+          <div class="row">
+            {{ range . }}
+            {{ if ne .Section "misc" }}
+            {{ else }}
+              <div class="lg:col-4 md:col-6 mb-14">
+                {{ partial "components/blog-card" . }}
+              </div>
+              {{ end }}
+            {{ end }}
+          </div>
+        </div>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}

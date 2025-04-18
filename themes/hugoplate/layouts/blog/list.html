@@ -1,0 +1,50 @@
+{{ define "main" }}
+  <style>
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 10px;
+    padding: 20px;
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    color: white;
+  }</style>
+
+  <div class="text-center">
+    {{ $header:= .Params.header }}
+    <div class="relative w-full h-96 flex items-center justify-center" style="background-image: url('{{ $header }}'); background-size: cover; background-position: center;">
+     <div class="glass-effect text-right">
+      <h1 class="text-4xl font-bold" style="color: white;">
+       Our cars collection
+      </h1>
+      <h2 class="text-sm mt-2" style="color: white;">
+        All <b class="text-xl">{{ len (where .Site.RegularPages "Section" "==" "car") }}</b> {{ .Params.description}}
+      </h2>
+     </div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="row gx-5">
+        <!-- blog posts -->
+        <div class="lg:col-12">
+          <div class="row">
+            {{ $data:= where .Site.RegularPages "Section" "==" "car" }}
+            {{ range $data | first 12}}
+              <div class="md:col-4 mb ">
+                {{ partial "components/related-card" . }}
+              </div>
+            {{ end }}
+          </div>
+          {{ partial "components/pagination.html" . }}
+        </div>
+        <!-- sidebar -->
+      </div>
+    </div>
+  </section>
+{{ end }}
+
+

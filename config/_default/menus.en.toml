@@ -1,0 +1,182 @@
+############# English navigation ##############
+
+# main menu
+[[main]]
+name = "Cars"
+url = "/cars/"
+weight = 1
+
+
+[[main]]
+name = "Brands"
+url = "/brand"
+weight = 2
+
+[[main]]
+parent = "Brands"
+name = "Ferrari"
+url = "/tags/ferrari/"
+weight = 1
+
+[[main]]
+parent = "Brands"
+name = "BMW"
+url = "/tags/bmw/"
+weight = 2
+
+[[main]]
+parent = "Brands"
+name = "Porsche"
+url = "/tags/porsche/"
+weight = 3
+
+[[main]]
+parent = "Brands"
+name = "Mercedes"
+url = "/tags/mercedes/"
+weight = 4
+
+[[main]]
+parent = "Brands"
+name = "Aston Martin"
+url = "/tags/aston-martin/"
+weight = 5
+
+[[main]]
+parent = "Brands"
+name = "Ford"
+url = "/tags/ford/"
+weight = 6
+
+[[main]]
+parent = "Brands"
+name = "Audi"
+url = "/tags/audi/"
+weight = 7
+
+[[main]]
+parent = "Brands"
+name = "Chevrolet"
+url = "/tags/chevrolet/"
+weight = 8
+
+[[main]]
+parent = "Brands"
+name = "Lamborghini"
+url = "/tags/lamborghini/"
+weight = 9
+
+[[main]]
+name = "Class"
+weight = 2
+
+
+[[main]]
+parent = "Class"
+name = "LMDh/LMH"
+url = "/tags/hypercar/"
+weight = 1
+
+[[main]]
+parent = "Class"
+name = "GT4"
+url = "/tags/GT4/"
+weight = 3
+
+[[main]]
+parent = "Class"
+name = "GT3"
+url = "/tags/gt3/"
+weight = 4
+
+[[main]]
+parent = "Class"
+name = "GT2"
+url = "/tags/gt2/"
+weight = 5
+
+[[main]]
+parent = "Class"
+name = "GTE"
+url = "/tags/gte/"
+weight = 6
+
+
+[[main]]
+parent = "Class"
+name = "Protopye"
+url = "/tags/le-mans-prototype/"
+weight = 7
+
+[[main]]
+parent = "Class"
+name = "Formula"
+url = "/tags/formula/"
+weight = 2
+
+
+
+[[main]]
+name = "Creators"
+weight = 2
+
+[[main]]
+parent = "Creators"
+name = "URD - United Racing Design"
+url = "/tags/urd/"
+weight = 2
+
+[[main]]
+parent = "Creators"
+name = "VRC - Virtual Racing Cars"
+url = "/tags/vrc/"
+weight = 1
+
+[[main]]
+parent = "Creators"
+name = "FSR - 1st Studio Race"
+url = "/tags/fsr/"
+weight = 4
+
+[[main]]
+parent = "Creators"
+name = "ChemFlummi"
+url = "/tags/chemflummi/"
+weight = 3
+
+[[main]]
+parent = "Creators"
+name = "LP Desgin"
+url = "/tags/lp-design/"
+weight = 5
+
+[[main]]
+parent = "Creators"
+name = "Fenryr"
+url = "/tags/fenryr/"
+weight = 6
+
+
+[[main]]
+name = "Tracks"
+url = "/tracks/"
+weight = 3
+
+
+
+[[main]]
+name = "Other mods"
+url = "/misc"
+weight = 4
+
+# footer menu
+
+[[footer]]
+name = "How To Download"
+url = "/how-to-download"
+weight = 2
+
+[[footer]]
+name = "Useful Links"
+url = "/useful-links"
+weight = 3

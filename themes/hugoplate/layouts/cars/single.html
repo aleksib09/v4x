@@ -1,0 +1,366 @@
+{{ define "main" }}
+<div class="bg-img"></div>
+  <section class="section pt-7">
+    <div class="container">
+      <div class="row justify-center">
+        <article class="lg:col-10">
+          <style>
+            .lightbox {
+              display: none;
+              position: fixed;
+              object-position: center;
+              z-index: 1000;
+              padding: 10em 62px 0px 62px;
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
+              overflow: auto;
+              background-color: rgba(0, 0, 0, 0.9);
+            }
+            .lightbox-content {
+              margin: auto;
+              display: block;
+              max-width: 70%;
+              height: auto;
+              cursor: pointer;
+              padding: 0 0 0 0
+            }
+            .lightbox-close {
+              position: absolute;
+              top: 15px;
+              right: 35px;
+              color: #fff;
+              font-size: 40px;
+              font-weight: bold;
+              transition: 0.3s;
+            }
+            .lightbox-close:hover,
+            .lightbox-close:focus {
+              color: #bbb;
+              text-decoration: none;
+              cursor: pointer;
+            }
+           </style>
+           <script>
+            function showImage(src) {
+              document.getElementById('main-image').src = src;
+            }
+            function openLightbox() {
+              document.getElementById('lightbox').style.display = 'block';
+              document.getElementById('lightbox-image').src = document.getElementById('main-image').src;
+            }
+            function closeLightbox() {
+              document.getElementById('lightbox').style.display = 'none';
+            }
+           </script>
+           <div class="page-header pb-4">
+            <h6>
+            <i class="fa-solid fa-car mr-2"></i> {{ .Title }}</h6>
+          </div>
+          <div class="w-full flex mt-4 mb-5">
+            {{ $galleryimg:= .Params.cargallery }}
+            {{ if $galleryimg }}
+            <div class="flex w-auto justify-center">
+              {{/*  Display main image  */}}
+             <img id="main-image" alt="{{ .Title }}" 
+             class="thumbnail" 
+             onclick="openLightbox()"
+             {{ if .Params.mainimage }} 
+             src="https://i.imgur.com/{{ .Params.mainimage }}.jpg" {{ else }}
+             src="/{{ if .Params.image2}}{{.Params.image2}}{{else}}{{.Params.image}}{{end}}"
+             {{ end }} 
+             style="width: auto; height: 500px;"/>
+            </div>
+            {{/*  Display manufacturer  */}}
+            <div class="flex flex-col justify-start ml-4 mb-2 space-y-4" style="margin-bottom:10px">
+              <div class="flex thumbnail justify-center" style="padding-top: 8.5px; padding-bottom: 8.45px">
+                <a href="/tags/{{ .Params.manu | urlize }}"><img class="cursor-pointer" src="/images/{{ .Params.manu }}.png" style="max-width: 140px; height: auto;"/></a>
+               </div>
+               {{/*  Show small main image on the list gallery  */}}
+              <div class="flex justify-center" style="margin-top: 4px">
+                <img 
+                {{if .Params.mainimage }}
+                onclick="showImage(`https://i.imgur.com/{{ .Params.mainimage }}.jpg`)" {{ else }}
+                onclick="showImage(`/{{ if .Params.image2}}{{.Params.image2}}{{else}}{{.Params.image}}{{end}}`)"
+                {{ end }}
+                class="cursor-pointer"
+                {{if .Params.mainimage }}
+                src="https://i.imgur.com/{{ .Params.mainimage }}.jpg" {{ else }}
+                src="/{{ if .Params.image2 }}{{.Params.image2}}{{else}}{{.Params.image}}{{end}}" {{ end }}
+                style="width: 165px; height: 96px;"/>
+               </div>
+            {{ range $galleryimg }}
+             <div class="flex justify-center">
+              <img onclick="showImage(`https://i.imgur.com/{{ . }}.jpg`)" class="cursor-pointer" src="https://i.imgur.com/{{ . }}.jpg" style="width: 165px; height: 96px;"/>
+             </div>
+              {{ end }}
+
+               {{ else }}
+               <div class="flex w-auto center justify-center">
+                {{ if .Params.image2 }}
+                <img id="main-image" class="thumbnail cursor-pointer shadow-lg" onclick="openLightbox()" src="/{{.Params.image2}}" style="max-width: auto; height: 610px;"/>
+                {{ else }}
+                <img id="main-image" class="thumbnail cursor-pointer shadow-lg" onclick="openLightbox()" src="/{{.Params.image}}" style="max-width: auto; height: 610px;"/>
+                {{ end }}
+              {{ end  }}
+            </div>
+           </div>
+           <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+            <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+            <img class="lightbox-content" id="lightbox-image">
+            </div>
+
+          {{/*  <ul class="mb-1.5 flex flex-row flex-nowrap justify-between"> 
+            {{ $categories:= .Params.categories }}
+            {{ if $categories }}
+              <li class="mr-4 inline-block">
+                <i class="fa-solid fa-car fa-xs mr-1"></i>Collection: 
+                {{ range $i,$p:= $categories }}
+                  <a class=""
+                    href="{{ `/` | relLangURL }}{{ . | urlize | lower }}/"
+                    class=""
+                    >{{ . | humanize }}{{ if ne $i (sub (len $categories) 1) }}
+                      {{ "," }}
+                    {{ end }}
+                  </a>
+                {{ end }}
+              </li>
+            {{ end }}
+            <li class="mr-4 inline-block">
+              <i class="fa-solid fa-earth-americas mr-1 fa-xs"></i>Nationality: <a href="/tags/{{ .Params.country }}"> {{ .Params.country }}</a>
+            </li>
+            <li class="mr-4 inline-block">
+              <i class="fa-regular  fa-user fa-xs mr-1"></i>Creator: 
+              <a class="" href="/tags/{{ .Params.creator | urlize }}" alt="{{ .Params.creator }}"/> {{ .Params.creator }} </a>
+            </li>
+            <li class="mr-4 inline-block">
+              <i class="fa-regular fa-certificate fa-xs mr-1"></i>
+              <a class="" href="/tags/{{ .Params.class  }}">{{ .Params.class  }}</a> Class
+            </li>
+            <li class="mr-4 inline-block">
+              <i class="fa-solid fa-feather-pointed fa-xs mr-1"></i></i>
+              Date added: <b>{{ time.Format ":date_long" .PublishDate }}</b>
+            </li>
+          </ul>  */}}
+          {{ if eq (len .Content) 0 }} {{ else }} <hr> {{ end }}
+          
+          <div class="content mb-4">
+            {{ .Content }}
+          </div>
+          <hr style="margin-bottom: 10px;">
+{{/*  Image Gallery  */}}
+          {{/*  <script>
+            function showImage(src) {
+              document.getElementById('main-image').src = src;
+            }
+           </script>
+
+           <div class="w-full mb-5">
+
+            <div class="flex w-full justify-center mb-4">
+             <img class="rounded-lg max-w-full" id="main-image" alt="{{ .Params.description}}" class="rounded-lg shadow-lg" src="/{{ .Params.image}}" style="width: 100%; height: 595px;"/>
+            </div>
+            <div class="grid grid-cols-5 gap-4">
+             <div class="flex justify-center">
+              <img onclick="showImage('https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg')" alt="A pair of colorful sneakers placed on a white box" class="rounded-lg shadow-lg cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg" style="width:199px; height:140px"/>
+             </div>
+             <div class="flex justify-center">
+              <img onclick="showImage('https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg')" alt="A white shopping bag and a white pillow with a tag" class="rounded-lg shadow-lg cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg" style="width:199px; height:140px"/>
+             </div>
+             <div class="flex justify-center">
+              <img onclick="showImage('https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg')" alt="Two geometric plant holders with small plants inside" class="rounded-lg shadow-lg cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg" style="width:199px; height:140px"/>
+             </div>
+             <div class="flex justify-center">
+              <img onclick="showImage('https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg')" alt="A smartwatch with a black strap and a large digital display showing 06 21 with a small Nike logo" class="rounded-lg shadow-lg cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg" style="width:199px; height:140px"/>
+             </div>
+             <div class="flex justify-center">
+              <img onclick="showImage('https://flowbite.s3.amazonaws.com/docs/gallery/featured/image.jpg')" alt="A blue and red sports shoe with yellow laces" class="rounded-lg shadow-lg cursor-pointer" src="https://flowbite.s3.amazonaws.com/docs/gallery/featured/image.jpg" style="width:199px; height:140px"/>
+             </div>
+            </div>
+           </div>  */}}
+{{/*  Car INFO  */}}
+          {{ $cspreq:= .Params.csp}}
+          {{ $cspreq1:= .Params.csp1}}
+          {{if or (in $cspreq "Unknown") (in $cspreq "No")}}
+          {{ else }}
+          <div class="notice success" style="margin-bottom:4px">
+            <div class="notice-head"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="22" height="22">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"></path>
+            </svg><p>Mod Requirements</p>
+            </div>
+            <div class="notice-body"><p>This car requires <b>Custom Shader Patch (CSP) {{ .Params.csp }} </b> public or newer. You can get latest <a class="font-bold" href="/misc/csp-028-preview1/">CSP 0.28 preview 1 here</a>!</p></div>
+          </div>
+          {{ end }}
+          <div class="flex items-center justify-center w-full py-2">
+            <div class="overflow-x-auto w-full">
+                    <div class="flex space-x-2">
+                      {{/*  <p class="inborder dark:bg-darkmode-light"><i class="fa fa-info fa-xs" style="padding-right: 4px"></i>car info</p>  */}}
+                        <div class="text-left px-2 py-2 grid grid-cols-2 rounded-lg gap-1 border content-center w-1/2" style="padding-left:23px">
+                            <div>
+                                <p>Name: <b>{{ .Params.carname}}</b></p>
+                              </div>
+                            <div>
+                              <p style="word-wrap:break-word; word-break: break-all" class="break-all"><b style="font-size:15px">AC: {{ .Params.folder}}</b></p>
+                              </div>
+                              <div>
+                                <p>File Size: <b>{{ .Params.zipsize}}</b></p>
+                                </div>
+                                <div>
+                                  <p>Stored on: <b>{{ .Params.host}}</b></p>
+                                  </div>
+                        </div>
+                        <div class="shadow-2xs text-left py-4 px-8 rounded-lg gap-2 border-1 grid grid-cols-2 content-center w-1/2" style="align-content: center;">
+                          <div>
+                            <p>CSP: <b>{{if or (in $cspreq "Unknown") (in $cspreq "No")}}
+                              {{ .Params.csp }} {{ else }} {{ .Params.csp }} <a href="/misc/csp-028-preview1/"  target="_blank">or newer {{ end }}</a></b></p>
+                          </div>
+                          <div>
+                            {{ $aithor:= .Params.creator }}
+                            
+                            <p>Collection: {{ if in .Params.creator "Unknown" }} <a href="/car/" target="_blank">{{ else }} <a href="/tags/{{ .Params.Creator | urlize }}" target="_blank"><b>{{ .Params.Creator }} {{ end }}</b></a></p>
+                          </div>
+                          <div>
+                            <p>Liveries: {{ $r2r:= .Params.r2r }}
+                              {{ if $r2r }}
+                              <a href="/tags/r2r"> {{ end }}<b>{{ .Params.livery }}</b></a></p>
+                          </div>
+                          <div>
+                            <p>Version: <b>{{ .Params.version }}</b></p>
+                          </div>
+                        </div>
+                        {{/*  <p class="inborder dark:inborder-dark" 
+                        style="text-align: left; margin-left: 56.6rem">
+                        <i class="fa-solid fa-arrow-down fa-xs" style="padding-right: 3px"></i>
+                        download here
+                        </p>  */}}
+                        <div class="text-center rounded-lg border flex items-center justify-center w-1/5">
+                          <a href="{{ .Params.link }}" target="_blank"><img alt={{ .Params.host }} class="mx-auto" src="/images/{{ .Params.host }}.png" width="118"></a>
+                      </div>
+                    </div>
+                </div>
+            </div>
+          <div class="flex items-center justify-center w-full shadow-xs">
+            <div class="overflow-x-auto w-full">
+                    <div class="flex space-x-2">
+                        <div class="text-center rounded-lg border py-4 px-8 flex items-center justify-center w-1/4 aspect-square">
+                            <a href="/tags/{{ .Params.manu | urlize | lower }}">
+                              {{ $manufacturer:= .Params.manu }}
+                              {{ $brand:= .Params.brandname }}
+                              {{ if .Params.brandname }}
+                              <img alt={{ .Params.manu }} class="mx-auto" src="/images/{{ .Params.brandname | urlize }}.png" width="168">
+                              {{ else }}
+                              <img alt={{ .Params.manu }} class="mx-auto" src="/images/{{ .Params.manu | urlize }}.png" width="168">
+                            {{ end }}</a>
+                        </div>
+                        <div class="text-left px-2 py-4 items-center rounded-lg grid grid-cols-2 gap-1 border w-1/4" style="padding-left: 20px;">
+                            <div>
+                                <p>Nationality:</p>
+                                {{ if eq .Params.country "World"}} <a href="/tags/{{ .Params.creator | urlize }}" target="_blank" class="font-bold"> {{ .Params.country}}</a>{{ else }}
+                                <a href="/tags/{{ .Params.country | urlize }}" target="_blank" class="font-bold">{{ .Params.country}}</a> {{ end }}
+                            </div>
+                            <div style="padding-left: 7px;">
+                                <p>Year:</p>
+                                <a href="/tags/{{ .Params.year}}" target="_blank" class="font-bold">{{ .Params.year}}</a>
+                            </div>
+                            <div>
+                                <p>Class:</p>
+                                <a href='/tags/{{ .Params.class }}' class="font-bold">{{ .Params.class }}</a>
+                            </div>
+                            <div style="padding-left: 7px;">
+                                <p>Drivetrain:</p>
+                                <p class="font-bold">{{ .Params.drivetrain }}</p>
+                            </div>
+                        </div>
+                        <div class="text-left px-2 py-4 rounded-lg grid grid-cols-3 gap-1 border-1 items-center w-1/2" style="padding-left:35px">
+                            <div>
+                                <p>Power:</p>
+                                <p class="font-bold">{{ .Params.power }}</p>
+                            </div>
+                            <div>
+                              <p>Torque:</p>
+                              <p class="font-bold">{{ .Params.torque }} nm</p>
+                            </div>
+                            <div>
+                                <p>Top Speed:</p>
+                                <p class="font-bold">{{ .Params.speed }} km/h</p>
+                            </div>
+                            <div>
+                                <p>Engine:</p>
+                                <p class="font-bold">{{ .Params.engine }}</p>
+                            </div>
+                            <div>
+                                <p>Gearbox:</p>
+                                <p class="font-bold">{{ .Params.gb }}</p>
+                            </div>
+                            <div>
+                                <p>Weight:</p>
+                                <p class="font-bold">{{ .Params.mass }} kg</p>
+                            </div>
+                        </div>
+                        <div class="text-left py-4 px-8 rounded-lg border grid grid-cols-1 gap-1 items-center w-1/5">
+                            <div><p>Creator: </p>{{ if .Params.creatorlink }} <a href="{{ .Params.creatorlink }}" class="font-bold" target="_blank"> {{else}}<a href="/tags/{{ .Params.creator | urlize }}" class="font-bold">{{end}}{{ .Params.creator }} 
+                              {{ $creatorfull:= .Params.creatorfull}}
+                              {{ if $creatorfull }} - {{ .Params.creatorfull }} {{end}}
+                            </a></div>
+                            <div><p>0-100 km/h: </p><p class="font-bold">{{ .Params.accel }}</p></div>          
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+          <br>
+          <div class="row gx-2 items-start justify-between w-full">
+            {{ $tags:= .Params.tags }}
+            {{ if $tags }}
+              <div class="lg:col-12 mb-10 flex items-center lg:mb-0">
+                <h6 class="mr-3">{{ T "tags" }}:</h6>
+                <ul>
+                  {{ range $i,$p:= $tags }}
+                    <li class="inline-block">
+                      <a
+                        class="btn btn-link"
+                        href="{{ `tags/` | relLangURL }}{{ . | urlize | lower }}/">
+                        {{ . }}
+                      </a>
+                    </li>
+                  {{ end }}
+                </ul>
+              </div>
+            {{ end }}
+            <div class="mr-4 inline-block">
+              <i class="fa-solid fa-feather-pointed fa-xs mr-1"></i></i>
+              Date added: <b>{{ time.Format ":date_long" .PublishDate }}</b>
+            </div>
+          </div>
+          <!-- comments 
+          {{ if site.Config.Services.Disqus.Shortname }}
+            <div class="mt-20">
+              {{ template "_internal/disqus.html" . }}
+            </div>
+          {{ end }}
+        </article>
+      </div> -->
+
+      <!-- Related posts -->
+      {{ $related := .Site.RegularPages.Related . | first 6 }}
+      {{/*  {{ $related = $related | first 3 }}  */}}
+      {{/*  {{ $related = where (where site.Pages "Params.tags" "intersect" (slice .Params.manu .Params.class )) "Permalink" "!=" .Page.Permalink }}  */}}
+      {{ with $related }}
+        <div class="section pb-0">
+          <h4 class="h5 mb-2"><i class="fa fa-bars mr-2"></i>Other similar cars</h4>
+          <div class="row gx-2" style="margin-right: calc(var(--bs-gutter-x) / -10); margin-left: calc(var(--bs-gutter-x) / -4)">
+            {{ range $related | first 6}}
+            {{ if ne .Section "cars"  }}
+            {{ else }}
+            <div class="lg:col-12 md:col-4">
+                {{ partial "components/related-card" .}}
+              </div>
+              {{ end }}
+            {{ end }}
+          </div>
+        </div>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}

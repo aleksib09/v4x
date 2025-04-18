@@ -1,0 +1,340 @@
+{{ define "main" }}
+  <section class="section pt-7">
+    <div class="container">
+      <div class="row justify-center">
+        <article class="lg:col-10">
+          <style>
+            .lightbox {
+              display: none;
+              position: fixed;
+              z-index: 1000;
+              padding-top: 2%;
+              left: 0;
+              top: 0;
+              width: 100%;
+              height: 100%;
+              overflow: auto;
+              background-color: rgba(0, 0, 0, 0.9);
+            }
+            .lightbox-content {
+              margin: auto;
+              display: block;
+              width: 90%;
+              cursor: pointer;
+            }
+            .lightbox-close {
+              position: absolute;
+              top: 15px;
+              right: 35px;
+              color: #fff;
+              font-size: 40px;
+              font-weight: bold;
+              transition: 0.3s;
+            }
+            .lightbox-close:hover,
+            .lightbox-close:focus {
+              color: #bbb;
+              text-decoration: none;
+              cursor: pointer;
+            }
+           </style>
+           <script>
+            function showImage(src) {
+              document.getElementById('main-image').src = src;
+            }
+            function openLightbox() {
+              document.getElementById('lightbox').style.display = 'block';
+              document.getElementById('lightbox-image').src = document.getElementById('main-image').src;
+            }
+            function closeLightbox() {
+              document.getElementById('lightbox').style.display = 'none';
+            }
+           </script>
+           <div class="page-header pb-4">
+            <h6>
+            <i class="fa-solid fa-road mr-2"></i> {{ .Title }}</h6>
+          </div>
+          <div class="w-full flex mt-4 mb-5">
+            {{ $galleryimg:= .Params.trackgallery }}
+            {{ if $galleryimg }}
+            <div class="flex w-auto justify-center">
+              
+             <img id="main-image" alt="{{ .Title }}" 
+             class="thumbnail pb-0 shadow-lg" 
+             onclick="openLightbox()" 
+             {{ if .Params.trackmainimage }} 
+             src="https://i.imgur.com/{{ .Params.trackmainimage }}.jpg" {{ else }} 
+             src="/{{.Params.image}}"  {{ end }}
+             style="max-width: auto; height: 520px;"/>
+            </div>
+            <div class="flex flex-col justify-start ml-4 space-y-4">
+            {{ range $galleryimg }}
+             <div class="thumbnail gap-2 flex justify-center">
+              <img onclick="showImage(`https://i.imgur.com/{{ . }}.jpg`)" class="shadow-lg cursor-pointer" src="https://i.imgur.com/{{ . }}.jpg" style="width: 150px; height: 89px;"/>
+             </div>
+              {{ end }}
+              <div class="flex thumbnail gap-2 justify-center">
+                <img 
+                {{ if .Params.trackmainimage }}
+                onclick="showImage(`https://i.imgur.com/{{ .Params.trackmainimage }}.jpg`)" {{ else }} 
+                onclick="showImage(`/{{.Params.image}}`)"  {{ end }}
+                class="shadow-lg cursor-pointer"
+                {{ if .Params.trackmainimage }}
+                src="https://i.imgur.com/{{ .Params.trackmainimage }}.jpg" {{ else }}
+                src="/{{.Params.image }}" {{ end }}
+                style="width: 150px; height: 89px;"/>
+               </div>
+               {{/*  Small image below track image  */}}
+               {{ $tgallery:= .Params.trackgallery}}
+               {{ $lengallery:= len $tgallery }}
+               {{ $champion:= .Params.trackhosted}} 
+               {{ with $champion }}
+               {{ range $i, $p:= $champion }}
+               {{ if eq $lengallery 3}}
+               {{ if eq $i 2 }}
+               {{ break }}           
+               {{ end }}
+               {{ else if eq $lengallery 2 }} 
+               {{ if eq $i 3 }}
+               {{ break }}           
+               {{ end }}
+               {{ else }}
+               {{ if eq $i 4}}
+                {{ break }}
+                {{ end }}
+                {{ end }}
+                <div class="flex thumbnail justify-center" style="padding-top: 8.7px; padding-bottom: 8.7px; margin-bottom:6px">
+                  <a href="/tags/{{ . | urlize }}"><img class="cursor-pointer" src="/images/{{ . | urlize}}.png" style="width: auto; max-width: 110px; height: auto;"/></a>
+                </div>
+               {{ end }}
+               {{ end }}
+               {{/*  <div class="flex thumbnail justify-center" style="padding-top: 8.7px; padding-bottom: 8.7px">
+                <a href="/tags/{{ .Params.tracklocation | urlize }}"><img class="cursor-pointer" src="/images/{{ .Params.tracklocation }}.png" style="width: auto; height: 40px;"/></a>
+               </div>  */}}
+              {{ else if .Params.trackmainimage }}
+              <div class="flex thumbnail w-auto justify-center">
+                <img id="main-image" class="shadow-lg" onclick="openLightbox()" src="https://i.imgur.com/{{.Params.trackmainimage}}.jpg" style="max-width: auto; height: 600px;"/>
+               {{ else }}
+               <div class="flex thumbnnail w-auto center justify-center">
+                <img id="main-image" class="shadow-lg" onclick="openLightbox()" src="/{{.Params.image}}" style="max-width: auto; height: 610px;"/>
+              {{ end  }}
+            </div>
+           </div>
+           <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+            <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+            <img class="lightbox-content" id="lightbox-image">
+            </div>
+
+          {{/*  <ul class="mb-1.5 flex flex-row flex-nowrap justify-between">
+            {{ $categories:= .Params.categories }}
+            {{ if $categories }}
+              <li class="mr-4 inline-block">
+                <i class="fa-regular fa-road fa-xs mr-3"></i>Collection: 
+                {{ range $i,$p:= $categories }}
+                  <a
+                    href="{{ `/` | relLangURL }}{{ . | urlize | lower }}/"
+                    class=""
+                    >{{ . | humanize }}{{ if ne $i (sub (len $categories) 1) }}
+                      {{ "," }}
+                    {{ end }}
+                  </a>
+                {{ end }}
+              </li>
+            {{ end }}
+            <li class="mr-4 inline-block">
+              <i class="fa-solid fa-earth-americas fa-xs mr-3"></i>Location: 
+              <a href="{{ .Params.tracklocation }}" alt="{{ .Params.tracklocation }}"/>{{ .Params.trackcity }}, {{ .Params.tracklocation }} </a>
+            </li>
+            <li class="mr-4 inline-block">
+              <i class="fa-regular fa-certificate fa-xs mr-3"></i>
+              FIA Grade {{ .Params.trackclass }}
+            </li>
+            <li class="mr-4 inline-block">
+              <i class="fa-regular fa-pencil-square mr-3"></i>Added: 
+              {{ time.Format ":date_long" .PublishDate }}
+            </li>
+          </ul>  */}}
+          {{ if eq (len .Content) 0 }} {{ else }} <hr> {{ end }}
+          <div class="content mb-2">
+            {{ .Content }}
+          </div>
+          <hr style="margin-bottom:6px">
+          {{ $cspreq:= .Params.trackcsp}}
+          {{ $cspreq1:= .Params.trackcsp1}}
+          {{ $trackrq:= .Params.trackrequirement}}
+          {{ $trackrqlink:= .Params.trackrequirelink}}
+          {{ if in $cspreq "No" }}
+          {{ else }}
+          <div class="notice warning" style="margin-bottom:5px">
+            <div class="notice-head"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="22" height="22">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"></path>
+            </svg><p>Mod Requirements</p>
+            </div>
+            <div class="notice-body"><p>This track requires <b>Custom Shader Patch (CSP) {{ .Params.trackcsp }} </b> public or newer. You can get latest CSP 0.28 preview 1 <a href="/misc/csp-028-preview1/"><strong>HERE</strong></a>!</p></div>
+          </div>
+          {{ end }}
+          {{ if $trackrq }}
+          <div class="notice warning" style="margin-bottom:12px">
+            <div class="notice-body" style="margin-top:1px"><p>This extension requires <b> {{ if $trackrqlink }}<a href="{{ .Params.trackrequirelink }}">{{ end }}{{ .Params.trackrequirement }} </b></a>  to work properly.</p></div>
+          </div>
+          {{ end }}
+          <div class="flex items-center justify-center w-full py-2">
+            <div class="overflow-x-auto w-full">
+                    <div class="flex space-x-2">
+                        <div class="text-left px-2 py-2 grid grid-cols-2 rounded-lg gap-1 border content-center w-1/2" style="padding-left:23px">
+                            <div>
+                                <p>Track: <b>{{ .Params.trackname}}</b></p>
+                              </div>
+                              <div style="padding-left:25px">
+                                <p>File Size: <b>{{ .Params.trackzipsize}}</b></p>
+                              </div>
+                              <div>
+                                <p>AC: <b class="text-green">{{ .Params.trackfolder}}</b></p>
+                                </div>
+                                <div style="padding-left:25px">
+                                  <p>Stored on: <a href="{{ .Params.tracklink }}" target="_blank"><b>{{ .Params.trackhost}}</b></a></p>
+                                  </div>
+                        </div>
+                        <div class="text-center rounded-lg border flex items-center justify-center w-1/5">
+                          <a href="/tags/{{ .Params.tracklocation | urlize }}"><img alt={{ .Params.tracklocation }} class="mx-auto" src="/images/{{ .Params.tracklocation | urlize }}.png" width="118"></a>
+                      </div>
+                        <div class="shadow-2xs text-left py-4 px-8 rounded-lg gap-2 border-1 grid grid-cols-2 content-center w-1/3" style="align-content: center;">
+                          <div>
+                            <p>Collection: <a href="/tags/{{ .Params.trackcreator }}" target="_blank"><b>{{ .Params.trackcreator }}</b></a></p>
+                          </div>
+                          <div>
+                            <p>Version: </p> <p><b>{{ .Params.trackversion}}</b></p>
+                          </div>
+                        </div>
+                        <div class="text-center rounded-lg border flex items-center justify-center w-1/5">
+                          <a href="{{ .Params.tracklink }}" target="_blank"><img alt={{ .Params.host }} class="mx-auto" src="/images/{{ .Params.trackhost }}.png" width="118"></a>
+                      </div>
+                    </div>
+                </div>
+            </div>
+          <div class="flex items-center justify-center w-full shadow-xs">
+            <div class="overflow-x-auto w-full">
+                    <div class="flex space-x-2">
+                        <div class="text-center rounded-lg border py-4 px-8 flex items-center justify-center w-1/4 aspect-square">
+                            <a href="/tags/{{ .Params.tracklocation }}"><img alt={{ .Params.trackname }} class="mx-auto" src="/images/{{ .Params.trackimage }}.png" width="168"></a>
+                        </div>
+                        <div class="text-left px-2 py-4 items-center rounded-lg grid grid-cols-2 gap-1 border w-1/2" style="padding-left: 23px;">
+                            <div>
+                                <p>Location:</p>
+                                <a href="/tags/{{ .Params.tracklocation}}" class="font-bold">{{ .Params.trackcity}}, {{ .Params.tracklocation}}</a>
+                            </div>
+                            <div style="padding-left:25px">
+                              <p>Grades:</p>
+                              <p class="font-bold">FIA Grade {{ .Params.trackclass }}</p>
+                            </div>
+                            <div>
+                            {{ $hosted:= .Params.trackhosted }}
+                            {{ if $hosted }}
+                              
+                              <p>Host:</p>
+                              {{ range $i,$p:= $hosted }}
+                                <p
+                                  class="font-bold inline-block">{{ if $i }}, {{ end }}
+                                  <a href="{{ `/tags/` | relLangURL }}{{ . | urlize | lower }}" >{{ . }}
+                                  </a>
+                            </p>
+                              {{ end }}          
+                            </div>
+                            {{ end }}
+                            {{ $ttype:= .Params.tracktype }}
+                            <div style="padding-left:25px">
+                              
+                              <p>Type:</p>
+                              {{ range $i,$p:= $ttype }}
+                              {{ if $i }}, {{ end }}
+                              <a href="{{ `/tags/` | relLangURL }}{{ . | urlize | lower }}" ><p class="inline-block font-bold">{{ . }}</p></a> {{ end }}
+                            </div>
+                        </div>
+                        <div class="text-left px-2 py-4 rounded-lg grid grid-cols-2 gap-1 border-1 items-center w-1/3" style="padding-left:35px">
+                            <div>
+                                <p>Length:</p>
+                                <p class="font-bold">{{ .Params.tracklength }} KM</p>
+                            </div>
+                            <div>
+                                <p>Open:</p>
+                                <p class="font-bold">{{ .Params.trackopened}}</p>
+                            </div>
+                            <div>
+                                <p>Layouts:</p>
+                                <p class="font-bold">{{ .Params.tracklayout }}</p>
+                            </div>
+                            <div>
+                                <p>Pitboxes:</p>
+                                <p class="font-bold">{{ .Params.trackpitboxes }}</p>
+                            </div>
+                        </div>
+                        <div class="text-left py-4 px-8 rounded-lg border grid grid-cols-1 gap-1 items-center w-1/5">
+                          {{ $clink:= .Params.trackcreatorlink }}
+                            <div><p>Creator: </p>{{ if $clink }} <a href="{{ .Params.trackcreatorlink }}" class="font-bold" target="_blank"> {{else}}<a href="/tags/{{ .Params.trackcreator }}" class="font-bold">{{end}}{{ .Params.trackcreator }} 
+                              {{ $creatorfull:= .Params.trackcreatorfull }}
+                              {{ if $creatorfull }} - {{ .Params.trackcreatorfull }} {{end}}
+                            </a></div>
+                            <div><p>Width: </p><p class="font-bold">{{ .Params.trackwidth }} m</p></div>          
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+          <br>
+          <div class="row gx-2 items-start justify-between">
+            {{ $tags:= .Params.tags }}
+            {{ if $tags }}
+              <div class="lg:col-12 mb-10 flex items-center lg:mb-0">
+                <h6 class="mr-3">{{ T "tags" }}:</h6>
+                <ul>
+                  {{ range $i,$p:= $tags }}
+                    <li class="inline-block">
+                      <a
+                        class="btn btn-link"
+                        href="{{ `/tags/` | relLangURL }}{{ . | urlize | lower }}/">
+                        {{ . }}
+                      </a>
+                    </li>
+                  {{ end }}
+                </ul>
+              </div>
+            {{ end }}
+          </div>
+          <div class="mr-4 inline-block">
+            <i class="fa-solid fa-feather-pointed fa-xs mr-1"></i></i>
+            Date added: <b>{{ time.Format ":date_long" .PublishDate }}</b>
+          </div>
+          <!-- comments 
+          {{ if site.Config.Services.Disqus.Shortname }}
+            <div class="mt-20">
+              {{ template "_internal/disqus.html" . }}
+            </div>
+          {{ end }}
+        </article>
+      </div> -->
+
+      <!-- Related posts -->
+      {{ $related := .Site.RegularPages.Related . | first 12 }}
+      {{/*  {{ $related = $related | first 3 }}  */}}
+      {{/*  {{ $related = where (where site.Pages "Params.tags" "intersect" (slice .Params.manu .Params.class )) "Permalink" "!=" .Page.Permalink }}  */}}
+      {{ with $related }}
+        <div class="section pb-0">
+          <h4 class="h5 mb-2"><i class="fa fa-road mr-2"></i>Same categories tracks</h4>
+          <div class="row" style="margin-right: calc(var(--bs-gutter-x) / 2); margin-left: calc(var(--bs-gutter-x) / -7)">
+            {{ range $related | first 12}}
+            {{ if ne .Section "tracks"}}
+            {{ else }}
+            {{/*  {{ if  }}
+            {{ continue  }}
+            {{ end }}  */}}
+              <div class="lg:col-3 md:col-6 mb-2" >
+                {{ partial "components/related-card" .}}
+              </div>
+              {{end}}
+            {{ end }}
+          </div>
+        </div>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}

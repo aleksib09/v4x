@@ -1,0 +1,43 @@
+{{ define "main" }}
+  <!-- /Banner -->
+  <section class="section-sm">
+      <center><h3>Recently updated mods</h3></center>
+    <br />
+
+    <div class="container">
+      <div class="row gx-5">
+        <!-- blog posts -->
+        <div class="lg:col-12">
+          <div class="row">
+            {{ $pages := where .site.RegularPages "Params.tags" "intersect" (slice .Params.class)}}
+            {{ $paginator := .Paginate $pages.ByPublishDate.Reverse 9 }}
+            {{ with $paginator }}
+            {{ range . }}
+              <div class="md:col-4 mb-14">
+                {{ partial "components/blog-card" . }}
+              </div>
+            {{ end }}
+            {{ $slice:= where site.Data.Pages "Params.tags" "intersect" (slice .Params.Manu .Params.class) }}
+      {{ with $slice }}
+        <div class="section pb-0">
+          <h4 class="h5 mb-12"><i class="fa fa-bars"></i> Car in same category</h4>
+          <div class="row">
+            {{ range . | first 6}}
+              <div class="lg:col-4 md:col-6 mb-14">
+                {{ partial "components/blog-card" .}}
+              </div>
+            {{ end }}
+          </div>
+        </div>
+      {{ end }}
+          </div>
+          {{ partial "components/pagination.html" . }}
+        </div>
+        <br>
+        <!-- sidebar -->
+      </div>
+    </div>
+    <br />
+  </section>
+
+{{ end }}
